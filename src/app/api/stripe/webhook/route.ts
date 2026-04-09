@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/mongodb';
-import { stripe, verifyWebhookSignature } from '@/lib/stripe';
+import { getStripe, verifyWebhookSignature } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 async function getSubscriptionFromInvoice(invoiceIdOrObject: string | any): Promise<string | null> {
   try {
     const invoice = typeof invoiceIdOrObject === 'string'
-      ? await stripe.invoices.retrieve(invoiceIdOrObject)
+      ? await getStripe().invoices.retrieve(invoiceIdOrObject)
       : invoiceIdOrObject;
     return invoice.subscription as string | null;
   } catch (error) {
@@ -88,7 +88,7 @@ async function processWebhookAsync(event: any) {
           // Handle subscription checkout completion
           const subscriptionId = session.subscription;
           if (subscriptionId) {
-            const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
+            const stripeSubscription = await getStripe().subscriptions.retrieve(subscriptionId);
             
             // Get user ID from metadata or find by email
             let userId: string | null = metadata.userId || null;
@@ -200,7 +200,7 @@ async function processWebhookAsync(event: any) {
             try {
               const paymentMethodId = stripeSubscription.default_payment_method;
               if (paymentMethodId) {
-                const stripePaymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+                const stripePaymentMethod = await getStripe().paymentMethods.retrieve(paymentMethodId);
                 
                 const stripeCustomerId = typeof stripeSubscription.customer === 'string' 
                   ? stripeSubscription.customer 
@@ -239,7 +239,7 @@ async function processWebhookAsync(event: any) {
             // Try to get the actual invoice from Stripe
             try {
               // Get the latest invoice for this subscription
-              const invoices = await stripe.invoices.list({
+              const invoices = await getStripe().invoices.list({
                 subscription: subscriptionId,
                 limit: 1,
               });
@@ -530,7 +530,7 @@ async function processWebhookAsync(event: any) {
           if (!customerEmail && subscription.customer) {
             try {
               const customer = typeof subscription.customer === 'string'
-                ? await stripe.customers.retrieve(subscription.customer)
+                ? await getStripe().customers.retrieve(subscription.customer)
                 : subscription.customer;
               customerEmail = customer.email || null;
             } catch (error) {
@@ -720,7 +720,7 @@ async function processWebhookAsync(event: any) {
           
           try {
             // Retrieve subscription from Stripe
-            const stripeSubscription = await stripe.subscriptions.retrieve(invoice.subscription);
+            const stripeSubscription = await getStripe().subscriptions.retrieve(invoice.subscription);
             const metadata = stripeSubscription.metadata || {};
             
             // Get user ID from metadata or find by customer email
@@ -735,7 +735,7 @@ async function processWebhookAsync(event: any) {
               } else if (!customerEmail && stripeSubscription.customer) {
                 try {
                   const customer = typeof stripeSubscription.customer === 'string'
-                    ? await stripe.customers.retrieve(stripeSubscription.customer)
+                    ? await getStripe().customers.retrieve(stripeSubscription.customer)
                     : stripeSubscription.customer;
                   customerEmail = customer.email || null;
                 } catch (error) {
@@ -910,7 +910,7 @@ async function processWebhookAsync(event: any) {
         if (paymentIntent.invoice) {
           try {
             const invoice = typeof paymentIntent.invoice === 'string'
-              ? await stripe.invoices.retrieve(paymentIntent.invoice)
+              ? await getStripe().invoices.retrieve(paymentIntent.invoice)
               : paymentIntent.invoice;
             
             invoiceId = invoice.id;

@@ -1,10 +1,21 @@
 import Stripe from 'stripe';
 
-// Initialize Stripe with secret key
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia', // Use latest stable API version
-  typescript: true,
-});
+let stripeSingleton: Stripe | null = null;
+
+/** Lazy init so `next build` can load routes without Stripe env vars. */
+export function getStripe(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY is required');
+  }
+  if (!stripeSingleton) {
+    stripeSingleton = new Stripe(key, {
+      apiVersion: '2024-12-18.acacia',
+      typescript: true,
+    });
+  }
+  return stripeSingleton;
+}
 
 // Stripe configuration for checkout sessions
 export const STRIPE_CONFIG = {
@@ -22,7 +33,7 @@ export function verifyWebhookSignature(
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
   
   try {
-    return stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+    return getStripe().webhooks.constructEvent(payload, signature, webhookSecret);
   } catch (error) {
     console.error('Webhook signature verification failed:', error);
     throw new Error('Invalid webhook signature');

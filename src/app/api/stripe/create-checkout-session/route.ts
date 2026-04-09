@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 
 // Get base URL for the application
 // In production on Vercel, this should be set to: https://inspired-analyst.vercel.app
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     // Create Stripe checkout session
     let session;
     try {
-      session = await stripe.checkout.sessions.create({
+      session = await getStripe().checkout.sessions.create({
         mode: 'payment',
         currency: 'usd',
         line_items: [

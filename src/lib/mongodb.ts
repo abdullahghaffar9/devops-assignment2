@@ -5,18 +5,17 @@
  */
 import { MongoClient, Db } from 'mongodb';
 
-const uri = process.env.MONGODB_URI!;
+const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DATABASE || 'inspired_analyst';
-
-if (!uri) {
-  throw new Error('MONGODB_URI is required in .env');
-}
 
 declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
 function getClientPromise(): Promise<MongoClient> {
+  if (!uri) {
+    throw new Error('MONGODB_URI is required in .env');
+  }
   if (!global._mongoClientPromise) {
     const client = new MongoClient(uri, {
       maxPoolSize: 10,

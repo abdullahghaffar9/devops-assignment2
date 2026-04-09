@@ -146,6 +146,12 @@ const Navbar: React.FC<NavbarProps> = ({ variant = 'default' }) => {
 
           {/* CTA Button - Right */}
           <div className="flex items-center gap-2">
+            <Link
+              href="/admin/login"
+              className="border border-white/60 text-white px-3 sm:px-3 py-2.5 sm:py-2 rounded-full text-xs sm:text-xs font-semibold hover:bg-white/10 transition-colors whitespace-nowrap h-10 sm:h-8 flex items-center cursor-pointer"
+            >
+              Admin
+            </Link>
             <a
               href="/meetings"
               className="bg-white text-[#0A0A0A] px-4 sm:px-3 py-2.5 sm:py-2 rounded-full text-xs sm:text-xs font-semibold hover:bg-gray-100 transition-colors whitespace-nowrap h-10 sm:h-8 flex items-center cursor-pointer"
@@ -197,6 +203,12 @@ const Navbar: React.FC<NavbarProps> = ({ variant = 'default' }) => {
 
           {/* CTA Button */}
           <div className="flex items-center gap-3 flex-shrink-0">
+            <Link
+              href="/admin/login"
+              className="border border-white/60 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-white/10 transition-colors cursor-pointer"
+            >
+              Admin
+            </Link>
             <a
               href="/meetings"
               className="bg-white text-[#0A0A0A] px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
