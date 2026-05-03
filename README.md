@@ -56,3 +56,4 @@ Common scripts (see `package.json` for full list):
 Jenkins Pipeline Test Trigger
 Final Pipeline Validation Test
 Testing the webhook listener!
+Final Jenkins Webhook Auto-Trigger Test
