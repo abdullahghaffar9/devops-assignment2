@@ -53,3 +53,4 @@ Common scripts (see `package.json` for full list):
 
 - Any old documentation that references a FastAPI backend is outdated.
 - Use this README as the source of truth for the current project structure.
+Jenkins Pipeline Test Trigger
